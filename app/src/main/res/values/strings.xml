@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">stempl</string>
+    <string name="name">Name</string>
+    <string name="add_person">Add Person</string>
+</resources>
