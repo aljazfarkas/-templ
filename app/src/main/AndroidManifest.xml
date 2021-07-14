@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Stempl">
         <activity android:name=".AddPersonActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".NavigationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

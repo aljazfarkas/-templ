@@ -29,8 +29,8 @@ import com.pora.lib.CheckPair;
 import com.pora.lib.PeopleEditModel;
 
 
-public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder> {
-    public static final String TAG = PeopleAdapter.class.getSimpleName();
+public class PeopleAdapterDashboard extends RecyclerView.Adapter<PeopleAdapterDashboard.ViewHolder> {
+    public static final String TAG = PeopleAdapterDashboard.class.getSimpleName();
     private ApplicationMy app;
     private OnItemClickListener listener;
 
@@ -47,7 +47,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
         this.listener = listener;
     }
 
-    public PeopleAdapter(ApplicationMy app) {
+    public PeopleAdapterDashboard(ApplicationMy app) {
         peopleEditModelArrayList = new ArrayList<PeopleEditModel>();
         getFromFirebase(this);
 
@@ -55,7 +55,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
     }
 
 
-    public void getFromFirebase(PeopleAdapter peopleAdapter) {
+    public void getFromFirebase(PeopleAdapterDashboard peopleAdapter) {
         peopleEditModelArrayList.clear();
         FirebaseDatabase.getInstance().getReference().child("people")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -93,13 +93,13 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         // Inflate the custom layout
-        View view = inflater.inflate(R.layout.rv_rowlayout_person, parent, false);
+        View view = inflater.inflate(R.layout.rv_rowlayout_person_dashboard, parent, false);
         // Return a new holder instance
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PeopleAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PeopleAdapterDashboard.ViewHolder holder, int position) {
         holder.tvName.setText(peopleEditModelArrayList.get(position).getName());
         holder.tbCheckInOut.setChecked(!peopleEditModelArrayList.get(position).isCheckedIn());
 

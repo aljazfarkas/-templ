@@ -33,7 +33,7 @@ public class AddPersonActivity extends AppCompatActivity {
         Person newPerson = new Person(etPersonName.getText().toString(), etPin.getText().toString());
         app.writePerson(newPerson);
 
-        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        Intent intent = new Intent(getBaseContext(), NavigationActivity.class);
         startActivity(intent);
     }
 }

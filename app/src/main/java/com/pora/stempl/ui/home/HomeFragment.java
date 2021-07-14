@@ -1,12 +1,4 @@
-package com.pora.stempl;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.andrognito.pinlockview.IndicatorDots;
-import com.andrognito.pinlockview.PinLockListener;
-import com.andrognito.pinlockview.PinLockView;
+package com.pora.stempl.ui.home;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -14,19 +6,38 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.andrognito.pinlockview.IndicatorDots;
+import com.andrognito.pinlockview.PinLockListener;
+import com.andrognito.pinlockview.PinLockView;
+import com.pora.lib.PeopleEditModel;
+import com.pora.stempl.AddPersonActivity;
+import com.pora.stempl.ApplicationMy;
+import com.pora.stempl.NavigationActivity;
+import com.pora.stempl.PeopleAdapter;
+import com.pora.stempl.R;
+
 import java.time.LocalDateTime;
 
-public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnItemClickListener {
-    public static final String TAG = MainActivity.class.getSimpleName();
-
-    static int LAUNCH_PIN_LOCK_ACTIVITY = 1;
+public class HomeFragment extends Fragment implements PeopleAdapter.OnItemClickListener {
+    public static final String TAG = HomeFragment.class.getSimpleName();
 
     private ApplicationMy app;
     private PeopleAdapter adapter;
@@ -40,32 +51,31 @@ public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnI
 
     private View currentToggleRow;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    private HomeViewModel homeViewModel;
+    private View root;
+
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        homeViewModel =
+                new ViewModelProvider(this).get(HomeViewModel.class);
+        root = inflater.inflate(R.layout.fragment_home, container, false);
+
         bindGUI();
         initData();
+
+        return root;
     }
-
-
     private void bindGUI() {
     }
     private void initData(){
-        app = (ApplicationMy) getApplication();
+        app = (ApplicationMy) getActivity().getApplication();
         adapter = new PeopleAdapter(app);
-        recyclerView = findViewById(R.id.rv_person);
+
+        recyclerView = root.findViewById(R.id.rv_person);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         adapter.setOnItemClickListener(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_add, menu);
-        return true;
     }
 
     @Override
@@ -84,12 +94,12 @@ public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnI
     }
 
     public void goAddPerson(MenuItem item){
-        Intent intent = new Intent(getBaseContext(), AddPersonActivity.class);
+        Intent intent = new Intent(getActivity().getBaseContext(), AddPersonActivity.class);
         startActivity(intent);
     }
 
     public void createNewPinLockDialog(){
-        dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder = new AlertDialog.Builder(getActivity());
         final View pinLockPopupView = getLayoutInflater().inflate(R.layout.popup_pin_lock, null);
 
         mPinLockView = (PinLockView) pinLockPopupView.findViewById(R.id.pin_lock_view);
@@ -97,8 +107,18 @@ public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnI
         mIndicatorDots = (IndicatorDots) pinLockPopupView.findViewById(R.id.indicator_dots);
         mPinLockView.attachIndicatorDots(mIndicatorDots);
 
+        ImageButton btExit = (ImageButton) pinLockPopupView.findViewById(R.id.btExit);
+        btExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
         dialogBuilder.setView(pinLockPopupView);
         dialog = dialogBuilder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
@@ -155,4 +175,5 @@ public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnI
             Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
         }
     };
+
 }
