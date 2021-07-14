@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.pora.stempl.PeopleAdapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,10 +22,16 @@ import android.widget.ToggleButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.time.LocalDateTime;
+
 public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnItemClickListener {
+    static int LAUNCH_PIN_LOCK_ACTIVITY = 1;
+
     private ApplicationMy app;
     private PeopleAdapter adapter;
     private RecyclerView recyclerView;
+
+    private View currentToggleRow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,23 +69,58 @@ public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnI
 
     @Override
     public void onToggleButton(View itemView, int position) {
-        View row = recyclerView.findViewHolderForAdapterPosition(position).itemView;
+        currentToggleRow = recyclerView.findViewHolderForAdapterPosition(position).itemView;
+        // We reverse the toggle on click, because we have to wait for the PinLockActivity result
+        ToggleButton tbToggleCheckInOut = (ToggleButton)currentToggleRow.findViewById(R.id.tbCheckInOut);
+        tbToggleCheckInOut.setChecked(!tbToggleCheckInOut.isChecked());
 
-        TextView tvName =  (TextView)row.findViewById(R.id.tv_name);
-        ToggleButton tbToggleCheckInOut = (ToggleButton)row.findViewById(R.id.tbCheckInOut);
+        // We require the correct PIN
+        Intent intent = new Intent(getBaseContext(), PinLockActivity.class);
+        intent.putExtra("pin", "1234");
+        startActivityForResult(intent, LAUNCH_PIN_LOCK_ACTIVITY);
 
-        String name = tvName.getText().toString();
-        boolean isCheckingIn = tbToggleCheckInOut.isChecked();
+    }
+    // We wait for activity result of the PIN Lock activity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        if(isCheckingIn){
-            app.checkInPerson(name);
+        if (requestCode == LAUNCH_PIN_LOCK_ACTIVITY) {
+            if(resultCode == Activity.RESULT_OK){
+                TextView tvName =  (TextView)currentToggleRow.findViewById(R.id.tv_name);
+                ToggleButton tbToggleCheckInOut = (ToggleButton)currentToggleRow.findViewById(R.id.tbCheckInOut);
+                // We toggle the button back programmatically
+                tbToggleCheckInOut.setChecked(!tbToggleCheckInOut.isChecked());
+
+                String name = tvName.getText().toString();
+                LocalDateTime ltNow = LocalDateTime.now();
+                boolean isCheckingIn = tbToggleCheckInOut.isChecked();
+
+                // We add to firebase
+                if(isCheckingIn){
+                    app.checkInPerson(name, ltNow);
+                }
+                else{
+                    app.checkOutPerson(name, ltNow);
+                }
+
+                // We add to adapter People array
+                for (PeopleEditModel person : PeopleAdapter.peopleEditModelArrayList){
+                    if(person.getName().equals(name)){
+                        if(isCheckingIn){
+                            person.addCheckIn(ltNow);
+                        }
+                        else{
+                            person.addCheckOut(ltNow);
+                        }
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // Write your code if there's no result
+            }
         }
-        else{
-            app.checkOutPerson(name);
-        }
-        
-        //refreshamo people array
-        adapter.getFromFirebase(adapter);
     }
 
     public void goAddPerson(MenuItem item){

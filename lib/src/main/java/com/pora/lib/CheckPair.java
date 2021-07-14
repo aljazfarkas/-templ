@@ -12,10 +12,13 @@ public class CheckPair {
         this.checkOut = checkOut;
     }
 
+    /**
+     * Default checkIn/checkOut value je LocalDateTime.MIN
+     */
     public CheckPair() {
         super();
-        this.checkIn = LocalDateTime.now();
-        this.checkOut = LocalDateTime.now();
+        this.checkIn = LocalDateTime.MIN;
+        this.checkOut = LocalDateTime.MIN;
     }
 
     public int hashCode() {

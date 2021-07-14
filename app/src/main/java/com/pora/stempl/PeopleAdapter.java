@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -48,14 +49,19 @@ class PeopleEditModel {
     public void addCheckOut(LocalDateTime dateTime){
         this.checkedTimes.get(this.checkedTimes.size() - 1).setCheckOut(dateTime);
     }
-
+    public boolean isCheckedIn(){
+        if(checkedTimes.size() == 0)
+            return true;
+        if (checkedTimes.get(checkedTimes.size() - 1).getCheckOut() == LocalDateTime.MIN)
+            return false;
+        else return true;
+    }
 }
 
 public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder> {
     public static final String TAG = PeopleAdapter.class.getSimpleName();
     private ApplicationMy app;
     private OnItemClickListener listener;
-    private ToggleButton tbCheckInOut;
 
     public static ArrayList<PeopleEditModel> peopleEditModelArrayList;
 
@@ -71,6 +77,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
     }
 
     public PeopleAdapter(ApplicationMy app) {
+        peopleEditModelArrayList = new ArrayList<PeopleEditModel>();
         getFromFirebase(this);
 
         this.app = app;
@@ -78,7 +85,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
 
 
     public void getFromFirebase(PeopleAdapter peopleAdapter) {
-        peopleEditModelArrayList = new ArrayList<PeopleEditModel>();
+        peopleEditModelArrayList.clear();
         FirebaseDatabase.getInstance().getReference().child("people")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -120,6 +127,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull PeopleAdapter.ViewHolder holder, int position) {
         holder.tvName.setText(peopleEditModelArrayList.get(position).getName());
+        holder.tbCheckInOut.setChecked(!peopleEditModelArrayList.get(position).isCheckedIn());
 
         if (position % 2 == 1) {
             holder.ozadje.setBackgroundColor(Color.LTGRAY);
@@ -146,7 +154,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
             ozadje = v.findViewById(R.id.layoutrow_event);
             v.setOnClickListener(view -> {
                 if (listener != null) {
-                    int position = getAdapterPosition();
+                    int position = this.getLayoutPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         listener.onItemClick(itemView, position);
                     }
@@ -155,7 +163,6 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
 
             tbCheckInOut.setOnClickListener(this);
         }
-
 
         @Override
         public void onClick(View v) {

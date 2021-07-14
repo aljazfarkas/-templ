@@ -36,7 +36,6 @@ public class ApplicationMy extends Application {
     public static final String TAG = ApplicationMy.class.getSimpleName();
     private FirebaseDatabase database;
     private DatabaseReference peopleRef;
-    private People people;
 
     public static final String APP_ID = "APP_ID_KEY";
     public static SharedPreferences sp;
@@ -50,7 +49,6 @@ public class ApplicationMy extends Application {
         FirebaseApp.initializeApp(this);
         database = FirebaseDatabase.getInstance();
         peopleRef = database.getReference("people");
-        people = new People();
     }
 
     public void setAppId() {
@@ -67,9 +65,7 @@ public class ApplicationMy extends Application {
         Log.d(TAG, "id:" + idAPP);
     }
 
-    public void checkInPerson(String name) {
-        LocalDateTime lt = LocalDateTime.now();
-
+    public void checkInPerson(String name, LocalDateTime lt) {
         DatabaseReference checkTimesRef = peopleRef.child(idAPP).child(name).child("checkTimes");
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
@@ -84,11 +80,10 @@ public class ApplicationMy extends Application {
             }
         };
         checkTimesRef.addListenerForSingleValueEvent(valueEventListener);
+
     }
 
-    public void checkOutPerson(String name) {
-        LocalDateTime lt = LocalDateTime.now();
-
+    public void checkOutPerson(String name, LocalDateTime lt) {
         DatabaseReference checkTimesRef = peopleRef.child(idAPP).child(name).child("checkTimes");
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
@@ -103,14 +98,6 @@ public class ApplicationMy extends Application {
             }
         };
         checkTimesRef.addListenerForSingleValueEvent(valueEventListener);
-    }
-
-    public People getPeople() {
-        return people;
-    }
-
-    public void setPeople(People people) {
-        this.people = people;
     }
 
     public void writePerson(Person person) {
