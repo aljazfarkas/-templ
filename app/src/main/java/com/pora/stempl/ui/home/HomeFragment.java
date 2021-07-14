@@ -93,10 +93,6 @@ public class HomeFragment extends Fragment implements PeopleAdapter.OnItemClickL
         createNewPinLockDialog();
     }
 
-    public void goAddPerson(MenuItem item){
-        Intent intent = new Intent(getActivity().getBaseContext(), AddPersonActivity.class);
-        startActivity(intent);
-    }
 
     public void createNewPinLockDialog(){
         dialogBuilder = new AlertDialog.Builder(getActivity());
