@@ -13,8 +13,9 @@
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="24dp"
         android:text="@string/name"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,18 +23,18 @@
 
     <ToggleButton
         android:id="@+id/tbCheckInOut"
-        android:layout_gravity="end"
-        android:layout_width="120dp"
+        android:layout_width="200dp"
         android:layout_height="0dp"
+        android:layout_gravity="end"
         android:layout_margin="5dp"
         android:layout_weight="1"
+        android:background="@drawable/toggle_day_bg_selector"
         android:textOff="@string/check_in"
         android:textOn="@string/check_out"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/toggle_day_bg_selector"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

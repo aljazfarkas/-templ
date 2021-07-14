@@ -1,35 +1,42 @@
 package com.pora.stempl;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.pora.stempl.PeopleAdapter;
 
-import android.app.Activity;
+import com.andrognito.pinlockview.IndicatorDots;
+import com.andrognito.pinlockview.PinLockListener;
+import com.andrognito.pinlockview.PinLockView;
+
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.time.LocalDateTime;
 
 public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnItemClickListener {
+    public static final String TAG = MainActivity.class.getSimpleName();
+
     static int LAUNCH_PIN_LOCK_ACTIVITY = 1;
 
     private ApplicationMy app;
     private PeopleAdapter adapter;
     private RecyclerView recyclerView;
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
+
+    // Pin lock popup
+    private PinLockView mPinLockView;
+    private IndicatorDots mIndicatorDots;
 
     private View currentToggleRow;
 
@@ -37,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         bindGUI();
         initData();
     }
@@ -74,25 +80,41 @@ public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnI
         ToggleButton tbToggleCheckInOut = (ToggleButton)currentToggleRow.findViewById(R.id.tbCheckInOut);
         tbToggleCheckInOut.setChecked(!tbToggleCheckInOut.isChecked());
 
-        // We require the correct PIN
-        Intent intent = new Intent(getBaseContext(), PinLockActivity.class);
-        intent.putExtra("pin", "1234");
-        startActivityForResult(intent, LAUNCH_PIN_LOCK_ACTIVITY);
-
+        createNewPinLockDialog();
     }
-    // We wait for activity result of the PIN Lock activity
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == LAUNCH_PIN_LOCK_ACTIVITY) {
-            if(resultCode == Activity.RESULT_OK){
-                TextView tvName =  (TextView)currentToggleRow.findViewById(R.id.tv_name);
+    public void goAddPerson(MenuItem item){
+        Intent intent = new Intent(getBaseContext(), AddPersonActivity.class);
+        startActivity(intent);
+    }
+
+    public void createNewPinLockDialog(){
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View pinLockPopupView = getLayoutInflater().inflate(R.layout.popup_pin_lock, null);
+
+        mPinLockView = (PinLockView) pinLockPopupView.findViewById(R.id.pin_lock_view);
+        mPinLockView.setPinLockListener(mPinLockListener);
+        mIndicatorDots = (IndicatorDots) pinLockPopupView.findViewById(R.id.indicator_dots);
+        mPinLockView.attachIndicatorDots(mIndicatorDots);
+
+        dialogBuilder.setView(pinLockPopupView);
+        dialog = dialogBuilder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
+    private PinLockListener mPinLockListener = new PinLockListener() {
+        @Override
+        public void onComplete(String pin) {
+            Log.d(TAG, "Pin complete: " + pin);
+            TextView tvName =  (TextView)currentToggleRow.findViewById(R.id.tv_name);
+            String name = tvName.getText().toString();
+
+            String currentPin = app.findPersonByName(name).getPin();
+            if (pin.equals(currentPin)) {
                 ToggleButton tbToggleCheckInOut = (ToggleButton)currentToggleRow.findViewById(R.id.tbCheckInOut);
                 // We toggle the button back programmatically
                 tbToggleCheckInOut.setChecked(!tbToggleCheckInOut.isChecked());
 
-                String name = tvName.getText().toString();
                 LocalDateTime ltNow = LocalDateTime.now();
                 boolean isCheckingIn = tbToggleCheckInOut.isChecked();
 
@@ -116,15 +138,21 @@ public class MainActivity extends AppCompatActivity implements PeopleAdapter.OnI
                     }
                 }
                 adapter.notifyDataSetChanged();
+                dialog.dismiss();
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // Write your code if there's no result
+            else {
+                dialog.dismiss();
             }
         }
-    }
 
-    public void goAddPerson(MenuItem item){
-        Intent intent = new Intent(getBaseContext(), AddPersonActivity.class);
-        startActivity(intent);
-    }
+        @Override
+        public void onEmpty() {
+            Log.d(TAG, "Pin empty");
+        }
+
+        @Override
+        public void onPinChange(int pinLength, String intermediatePin) {
+            Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
+        }
+    };
 }

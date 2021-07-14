@@ -29,6 +29,7 @@ import com.pora.lib.CheckPair;
 
 class PeopleEditModel {
     private String name;
+    private String pin;
     private ArrayList<CheckPair> checkedTimes;
 
     public PeopleEditModel() {
@@ -55,6 +56,14 @@ class PeopleEditModel {
         if (checkedTimes.get(checkedTimes.size() - 1).getCheckOut() == LocalDateTime.MIN)
             return false;
         else return true;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 }
 
@@ -93,6 +102,9 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
                         for (DataSnapshot snapshot : dataSnapshot.child(app.idAPP).getChildren()) {
                             PeopleEditModel model = new PeopleEditModel();
                             model.setName(snapshot.getKey());
+                            if (snapshot.child("pin").exists()) {
+                                model.setPin(snapshot.child("pin").getValue().toString());
+                            }
                             if (snapshot.child("checkTimes").exists()){
                                 for (DataSnapshot checkedSnapshot : dataSnapshot.child(app.idAPP).child(snapshot.getKey()).child("checkTimes").getChildren()){
                                     model.addCheckIn(LocalDateTime.parse(checkedSnapshot.child("checkIn").getValue().toString()));

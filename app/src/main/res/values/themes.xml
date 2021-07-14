@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.Stempl" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/yellow</item>
+        <item name="colorPrimaryVariant">@color/dark_yellow</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/poppins</item>
     </style>
 
     <style name="Theme.Stempl.NoActionBar">
@@ -22,4 +23,6 @@
     <style name="Theme.Stempl.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Stempl.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <color name="dark_yellow">#F0AC00</color>
 </resources>

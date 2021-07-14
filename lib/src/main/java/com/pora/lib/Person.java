@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 public class Person {
     private String name;
+    private String pin;
     private ArrayList<CheckPair> checkedTimes;
 
-    public Person(String name) {
+    public Person(String name, String pin) {
         this.name = name;
+        this.pin = pin;
         this.checkedTimes = new ArrayList<>();
     }
 
@@ -19,8 +21,9 @@ public class Person {
         this.checkedTimes = checkedTimes;
     }
 
-    public Person(String name, ArrayList<CheckPair[]> checkedTimes) {
+    public Person(String name, String pin, ArrayList<CheckPair[]> checkedTimes) {
         this.name = name;
+        this.pin = pin;
         this.checkedTimes = new ArrayList<CheckPair>();
     }
 
@@ -38,5 +41,13 @@ public class Person {
     }
     public void addCheckOut(LocalDateTime dateTime){
         this.checkedTimes.get(this.checkedTimes.size() - 1).setCheckOut(dateTime);
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 }

@@ -65,6 +65,15 @@ public class ApplicationMy extends Application {
         Log.d(TAG, "id:" + idAPP);
     }
 
+    public PeopleEditModel findPersonByName(String name){
+        for(PeopleEditModel person : PeopleAdapter.peopleEditModelArrayList){
+            if(person.getName().equals(name)){
+                return person;
+            }
+        }
+        return null;
+    }
+
     public void checkInPerson(String name, LocalDateTime lt) {
         DatabaseReference checkTimesRef = peopleRef.child(idAPP).child(name).child("checkTimes");
         ValueEventListener valueEventListener = new ValueEventListener() {
@@ -103,5 +112,7 @@ public class ApplicationMy extends Application {
     public void writePerson(Person person) {
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         peopleRef.child(idAPP).child(person.getName()).child("uuid").setValue(uuid);
+        peopleRef.child(idAPP).child(person.getName()).child("pin").setValue(person.getPin());
+
     }
 }

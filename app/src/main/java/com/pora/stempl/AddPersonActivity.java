@@ -13,6 +13,7 @@ import com.pora.lib.Person;
 public class AddPersonActivity extends AppCompatActivity {
     private ApplicationMy app;
     private EditText etPersonName;
+    private EditText etPin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +27,10 @@ public class AddPersonActivity extends AppCompatActivity {
     }
     private void bindData() {
         this.etPersonName = (EditText) findViewById(R.id.etPersonName);
-
+        this.etPin = (EditText) findViewById(R.id.etPin);
     }
     public void addPerson(View view) {
-        Person newPerson = new Person(etPersonName.getText().toString());
+        Person newPerson = new Person(etPersonName.getText().toString(), etPin.getText().toString());
         app.writePerson(newPerson);
 
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
