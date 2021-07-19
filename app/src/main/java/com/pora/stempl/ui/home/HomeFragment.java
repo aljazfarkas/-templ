@@ -30,6 +30,7 @@ import com.andrognito.pinlockview.PinLockView;
 import com.pora.lib.PeopleEditModel;
 import com.pora.stempl.AddPersonActivity;
 import com.pora.stempl.ApplicationMy;
+import com.pora.stempl.InfoPersonActivity;
 import com.pora.stempl.NavigationActivity;
 import com.pora.stempl.PeopleAdapter;
 import com.pora.stempl.R;
@@ -91,6 +92,17 @@ public class HomeFragment extends Fragment implements PeopleAdapter.OnItemClickL
         tbToggleCheckInOut.setChecked(!tbToggleCheckInOut.isChecked());
 
         createNewPinLockDialog();
+    }
+
+    @Override
+    public void onInfoButton(View itemView, int position){
+        View currentRow = recyclerView.findViewHolderForAdapterPosition(position).itemView;
+
+        Intent intent = new Intent(getActivity(), InfoPersonActivity.class);
+        TextView tvName = (TextView) currentRow.findViewById(R.id.tv_name);
+        intent.putExtra("personName", tvName.getText().toString());
+        startActivity(intent);
+
     }
 
 

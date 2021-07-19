@@ -2,17 +2,14 @@ package com.pora.stempl;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -21,11 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 
-import com.pora.lib.CheckPair;
 import com.pora.lib.PeopleEditModel;
 
 
@@ -39,6 +33,7 @@ public class PeopleAdapterDashboard extends RecyclerView.Adapter<PeopleAdapterDa
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
         void onToggleButton(View itemView, int position);
+        void onInfoButton(View itemView, int position);
 
     }
 
@@ -119,13 +114,15 @@ public class PeopleAdapterDashboard extends RecyclerView.Adapter<PeopleAdapterDa
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView tvName;
         public ToggleButton tbCheckInOut;
+        public Button btInfo;
         public View ozadje;
 
         public ViewHolder(@NonNull View v) {
             super(v);
             tvName = (TextView) v.findViewById(R.id.tv_name);
             tbCheckInOut = (ToggleButton) v.findViewById(R.id.tbCheckInOut);
-            ozadje = v.findViewById(R.id.layoutrow_event);
+            btInfo = (Button) v.findViewById(R.id.btInfo);
+            ozadje = v.findViewById(R.id.layoutrow_person);
             v.setOnClickListener(view -> {
                 if (listener != null) {
                     int position = this.getLayoutPosition();
@@ -136,6 +133,7 @@ public class PeopleAdapterDashboard extends RecyclerView.Adapter<PeopleAdapterDa
             });
 
             tbCheckInOut.setOnClickListener(this);
+            btInfo.setOnClickListener(this);
         }
 
         @Override
@@ -143,6 +141,9 @@ public class PeopleAdapterDashboard extends RecyclerView.Adapter<PeopleAdapterDa
             switch (v.getId()) {
                 case R.id.tbCheckInOut:
                     listener.onToggleButton(v, this.getLayoutPosition());
+                    break;
+                case R.id.btInfo:
+                    listener.onInfoButton(v, this.getLayoutPosition());
                     break;
                 default:
                     break;

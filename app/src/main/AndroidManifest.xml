@@ -12,6 +12,7 @@
         android:screenOrientation="landscape"
         android:supportsRtl="true"
         android:theme="@style/Theme.Stempl">
+        <activity android:name=".InfoPersonActivity"></activity>
         <activity android:name=".AddPersonActivity" />
         <activity android:name=".NavigationActivity">
             <intent-filter>
