@@ -119,6 +119,10 @@ public class DashboardFragment extends Fragment implements PeopleAdapterDashboar
         mPinLockView.setPinLockListener(mPinLockListener);
         mIndicatorDots = (IndicatorDots) pinLockPopupView.findViewById(R.id.indicator_dots);
         mPinLockView.attachIndicatorDots(mIndicatorDots);
+
+        TextView tvPinCode = (TextView) pinLockPopupView.findViewById(R.id.tvPinLock);
+        tvPinCode.setText(R.string.enter_admin_pin);
+
         ImageButton btExit = (ImageButton) pinLockPopupView.findViewById(R.id.btExit);
         btExit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,8 +145,7 @@ public class DashboardFragment extends Fragment implements PeopleAdapterDashboar
             TextView tvName =  (TextView)currentToggleRow.findViewById(R.id.tv_name);
             String name = tvName.getText().toString();
 
-            String currentPin = app.findPersonByName(name).getPin();
-            if (pin.equals(currentPin)) {
+            if (pin.equals(app.ADMIN_PIN)) {
                 ToggleButton tbToggleCheckInOut = (ToggleButton)currentToggleRow.findViewById(R.id.tbCheckInOut);
                 // We toggle the button back programmatically
                 tbToggleCheckInOut.setChecked(!tbToggleCheckInOut.isChecked());

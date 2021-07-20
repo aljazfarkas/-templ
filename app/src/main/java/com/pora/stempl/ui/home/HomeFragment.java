@@ -115,6 +115,9 @@ public class HomeFragment extends Fragment implements PeopleAdapter.OnItemClickL
         mIndicatorDots = (IndicatorDots) pinLockPopupView.findViewById(R.id.indicator_dots);
         mPinLockView.attachIndicatorDots(mIndicatorDots);
 
+        TextView tvPinCode = (TextView) pinLockPopupView.findViewById(R.id.tvPinLock);
+        tvPinCode.setText(R.string.enter_user_pin);
+
         ImageButton btExit = (ImageButton) pinLockPopupView.findViewById(R.id.btExit);
         btExit.setOnClickListener(new View.OnClickListener() {
             @Override

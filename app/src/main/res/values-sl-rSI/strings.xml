@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Štempl</string>
+    <string name="name">Ime</string>
+    <string name="add_person">Dodaj osebo</string>
+    <string name="check_in">VSTOP</string>
+    <string name="check_out">IZHOD</string>
+    <string name="pin">PIN</string>
+    <string name="title_home">Domov</string>
+    <string name="title_dashboard">Nadzorna plošča</string>
+    <string name="info">INFO</string>
+    <string name="title_settings">Nastavitve</string>
+    <string name="enter_admin_pin">Vnesi admin PIN</string>
+    <string name="start">Začetek:</string>
+    <string name="end">Konec:</string>
+    <string name="at">ob</string>
+    <string name="checked_in">Vstop:</string>
+    <string name="enter_user_pin">Vnesi uporabnikov PIN</string>
+</resources>

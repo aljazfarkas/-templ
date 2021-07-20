@@ -34,6 +34,14 @@ public class PeopleEditModel {
         else return true;
     }
 
+    public ArrayList<CheckPair> getCheckedTimes() {
+        return checkedTimes;
+    }
+
+    public void setCheckedTimes(ArrayList<CheckPair> checkedTimes) {
+        this.checkedTimes = checkedTimes;
+    }
+
     public String getPin() {
         return pin;
     }

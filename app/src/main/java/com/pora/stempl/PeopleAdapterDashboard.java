@@ -18,8 +18,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import com.pora.lib.CheckPair;
 import com.pora.lib.PeopleEditModel;
 
 
@@ -96,6 +98,18 @@ public class PeopleAdapterDashboard extends RecyclerView.Adapter<PeopleAdapterDa
     @Override
     public void onBindViewHolder(@NonNull PeopleAdapterDashboard.ViewHolder holder, int position) {
         holder.tvName.setText(peopleEditModelArrayList.get(position).getName());
+        
+        ArrayList<CheckPair> checkedTimes = peopleEditModelArrayList.get(position).getCheckedTimes();
+        if (checkedTimes.size() != 0 && checkedTimes.get(checkedTimes.size() - 1).getCheckOut().equals(LocalDateTime.MIN)) {
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH.mm");
+            String formattedTime = checkedTimes.get(checkedTimes.size() - 1).getCheckIn().format(timeFormatter);
+            holder.tvCheckedInLabel.setText(R.string.checked_in);
+            holder.tvCheckedIn.setText(formattedTime);
+        } else {
+            holder.tvCheckedInLabel.setText("");
+            holder.tvCheckedIn.setText("");
+        }
+
         holder.tbCheckInOut.setChecked(!peopleEditModelArrayList.get(position).isCheckedIn());
 
         if (position % 2 == 1) {
@@ -114,6 +128,8 @@ public class PeopleAdapterDashboard extends RecyclerView.Adapter<PeopleAdapterDa
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView tvName;
         public ToggleButton tbCheckInOut;
+        public TextView tvCheckedIn;
+        public TextView tvCheckedInLabel;
         public Button btInfo;
         public View ozadje;
 
@@ -121,6 +137,8 @@ public class PeopleAdapterDashboard extends RecyclerView.Adapter<PeopleAdapterDa
             super(v);
             tvName = (TextView) v.findViewById(R.id.tv_name);
             tbCheckInOut = (ToggleButton) v.findViewById(R.id.tbCheckInOut);
+            tvCheckedIn = (TextView) v.findViewById(R.id.tv_checked_in);
+            tvCheckedInLabel = (TextView) v.findViewById(R.id.tv_checked_in_label);
             btInfo = (Button) v.findViewById(R.id.btInfo);
             ozadje = v.findViewById(R.id.layoutrow_person);
             v.setOnClickListener(view -> {

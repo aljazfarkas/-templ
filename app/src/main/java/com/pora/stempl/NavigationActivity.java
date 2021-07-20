@@ -39,6 +39,8 @@ import java.time.LocalDateTime;
 
 public class NavigationActivity extends AppCompatActivity {
     public static final String TAG = NavigationActivity.class.getSimpleName();
+    private ApplicationMy app;
+
 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
@@ -51,9 +53,13 @@ public class NavigationActivity extends AppCompatActivity {
     //Nav controller
     NavController navController;
 
+    private void initData(){
+        app = (ApplicationMy) getApplication();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initData();
 
         setContentView(R.layout.activity_navigation);
         BottomNavigationView navView = (BottomNavigationView) findViewById(R.id.nav_view);
@@ -122,7 +128,7 @@ public class NavigationActivity extends AppCompatActivity {
         public void onComplete(String pin) {
             Log.d(TAG, "Pin complete: " + pin);
 
-            String adminPin = "1234";
+            String adminPin = app.ADMIN_PIN;
             if (pin.equals(adminPin)) {
                 navController.navigate(navMenuToNavigate);
                 dialog.dismiss();

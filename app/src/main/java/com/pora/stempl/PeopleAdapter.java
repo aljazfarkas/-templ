@@ -17,8 +17,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import com.pora.lib.CheckPair;
 import com.pora.lib.PeopleEditModel;
 
 
@@ -31,7 +33,9 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
 
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
+
         void onToggleButton(View itemView, int position);
+
         void onInfoButton(View itemView, int position);
 
     }
@@ -61,10 +65,10 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
                             if (snapshot.child("pin").exists()) {
                                 model.setPin(snapshot.child("pin").getValue().toString());
                             }
-                            if (snapshot.child("checkTimes").exists()){
-                                for (DataSnapshot checkedSnapshot : dataSnapshot.child(app.idAPP).child(snapshot.getKey()).child("checkTimes").getChildren()){
+                            if (snapshot.child("checkTimes").exists()) {
+                                for (DataSnapshot checkedSnapshot : dataSnapshot.child(app.idAPP).child(snapshot.getKey()).child("checkTimes").getChildren()) {
                                     model.addCheckIn(LocalDateTime.parse(checkedSnapshot.child("checkIn").getValue().toString()));
-                                    if(checkedSnapshot.child("checkOut").exists())
+                                    if (checkedSnapshot.child("checkOut").exists())
                                         model.addCheckOut(LocalDateTime.parse(checkedSnapshot.child("checkOut").getValue().toString()));
                                 }
                             }
@@ -95,6 +99,17 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull PeopleAdapter.ViewHolder holder, int position) {
         holder.tvName.setText(peopleEditModelArrayList.get(position).getName());
+
+        ArrayList<CheckPair> checkedTimes = peopleEditModelArrayList.get(position).getCheckedTimes();
+        if (checkedTimes.size() != 0 && checkedTimes.get(checkedTimes.size() - 1).getCheckOut().equals(LocalDateTime.MIN)) {
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH.mm");
+            String formattedTime = checkedTimes.get(checkedTimes.size() - 1).getCheckIn().format(timeFormatter);
+            holder.tvCheckedInLabel.setText(R.string.checked_in);
+            holder.tvCheckedIn.setText(formattedTime);
+        } else {
+            holder.tvCheckedInLabel.setText("");
+            holder.tvCheckedIn.setText("");
+        }
         holder.tbCheckInOut.setChecked(!peopleEditModelArrayList.get(position).isCheckedIn());
 
         if (position % 2 == 1) {
@@ -112,12 +127,16 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView tvName;
+        public TextView tvCheckedIn;
+        public TextView tvCheckedInLabel;
         public ToggleButton tbCheckInOut;
         public View ozadje;
 
         public ViewHolder(@NonNull View v) {
             super(v);
             tvName = (TextView) v.findViewById(R.id.tv_name);
+            tvCheckedIn = (TextView) v.findViewById(R.id.tv_checked_in);
+            tvCheckedInLabel = (TextView) v.findViewById(R.id.tv_checked_in_label);
             tbCheckInOut = (ToggleButton) v.findViewById(R.id.tbCheckInOut);
             ozadje = v.findViewById(R.id.layoutrow_person);
             v.setOnClickListener(view -> {

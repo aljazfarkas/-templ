@@ -35,6 +35,7 @@ import java.util.UUID;
 
 public class ApplicationMy extends Application {
     public static final String TAG = ApplicationMy.class.getSimpleName();
+    public static final String ADMIN_PIN = "1234";
     private FirebaseDatabase database;
     private DatabaseReference peopleRef;
 
